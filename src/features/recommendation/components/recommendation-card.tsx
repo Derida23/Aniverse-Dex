@@ -40,7 +40,7 @@ export default function RecommendationCard({ anime, reason }: RecommendationCard
           <h3 className="font-semibold text-sm leading-tight line-clamp-2">{displayTitle}</h3>
 
           <div className="flex items-center gap-1.5">
-            {anime.score !== null && (
+            {anime.score != null && (
               <span className="text-xs font-medium text-yellow-500">
                 ★ {anime.score.toFixed(1)}
               </span>

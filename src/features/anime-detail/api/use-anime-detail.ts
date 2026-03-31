@@ -48,11 +48,7 @@ export function useAnimeDetail(id: number) {
 export function useAnimeCharacters(id: number) {
   return useQuery({
     queryKey: animeDetailKeys.characters(id),
-    queryFn: async () => {
-      // Small delay to avoid Jikan rate limit (3 req/s)
-      await new Promise((r) => setTimeout(r, 400))
-      return fetchAnimeCharacters(id)
-    },
+    queryFn: () => fetchAnimeCharacters(id),
     enabled: id > 0,
     staleTime: Infinity,
   })
@@ -61,10 +57,7 @@ export function useAnimeCharacters(id: number) {
 export function useAnimeReviews(id: number) {
   return useQuery({
     queryKey: animeDetailKeys.reviews(id),
-    queryFn: async () => {
-      await new Promise((r) => setTimeout(r, 1200))
-      return fetchAnimeReviews(id)
-    },
+    queryFn: () => fetchAnimeReviews(id),
     enabled: id > 0,
     staleTime: Infinity,
     retry: 2,
@@ -74,11 +67,7 @@ export function useAnimeReviews(id: number) {
 export function useAnimeRecommendations(id: number) {
   return useQuery({
     queryKey: animeDetailKeys.recommendations(id),
-    queryFn: async () => {
-      // Delay to avoid Jikan rate limit after detail + characters
-      await new Promise((r) => setTimeout(r, 800))
-      return fetchAnimeRecommendations(id)
-    },
+    queryFn: () => fetchAnimeRecommendations(id),
     enabled: id > 0,
     staleTime: Infinity,
     retry: 2,

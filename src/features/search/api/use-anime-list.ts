@@ -26,8 +26,8 @@ async function fetchAnimeList(
 }
 
 export function useAnimeList(filters: AnimeFilters) {
-  // Exclude page from filters for query key since infinite query handles pages
-  const { page: _page, ...filterKey } = filters
+  const { page: _p, ...filterKey } = filters
+  void _p // query key excludes page since infinite query handles it
 
   return useInfiniteQuery({
     queryKey: searchKeys.list(filterKey),

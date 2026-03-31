@@ -51,7 +51,7 @@ export function WatchlistItem({ item }: WatchlistItemProps) {
             className="h-full w-full object-cover transition-transform hover:scale-105"
             loading="lazy"
           />
-          {item.score !== null && (
+          {item.score != null && (
             <div className="absolute bottom-0 left-0 right-0 flex items-center justify-center gap-0.5 bg-black/70 py-0.5 text-[10px] text-white">
               <Star className="h-2.5 w-2.5 fill-yellow-400 text-yellow-400" />
               {item.score.toFixed(1)}

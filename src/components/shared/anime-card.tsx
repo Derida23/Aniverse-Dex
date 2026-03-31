@@ -39,7 +39,7 @@ export function AnimeCard({ anime }: AnimeCardProps) {
           className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
           loading="lazy"
         />
-        {anime.score !== null && (
+        {anime.score != null && (
           <div className="absolute bottom-2 left-2 flex items-center gap-1 rounded-md bg-black/70 px-2 py-0.5 text-xs text-white">
             <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
             {anime.score.toFixed(1)}
