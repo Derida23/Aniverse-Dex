@@ -219,9 +219,10 @@ export default function HomePage() {
 
   return (
     <div className="flex flex-col gap-8 animate-fade-in">
+      <h1 className="sr-only">Aniverse Dex</h1>
+
       {/* Hero: Spotlight + Top Airing Rank */}
-      <section className="flex flex-col gap-4 lg:flex-row lg:gap-6">
-        {/* Spotlight */}
+      <section aria-label={t('home.spotlight')} className="flex flex-col gap-4 lg:flex-row lg:gap-6">
         <div className="flex-1 min-w-0">
           {airingLoading || !spotlightAnime ? (
             <SpotlightSkeleton />
@@ -230,8 +231,7 @@ export default function HomePage() {
           )}
         </div>
 
-        {/* Top Airing sidebar */}
-        <div className="w-full lg:w-80 shrink-0">
+        <aside className="w-full lg:w-80 shrink-0">
           <div className="mb-3 flex items-center gap-2">
             <TrendingUp className="h-4 w-4 text-primary" />
             <h2 className="text-sm font-bold uppercase tracking-wide">{t('home.topAiring')}</h2>
@@ -239,17 +239,19 @@ export default function HomePage() {
           {airingLoading ? (
             <RankListSkeleton />
           ) : (
-            <div className="space-y-2">
+            <ol className="space-y-2" aria-label={t('home.topAiring')}>
               {rankList.map((anime, i) => (
-                <RankCard key={anime.mal_id} anime={anime} rank={i + 2} />
+                <li key={anime.mal_id}>
+                  <RankCard anime={anime} rank={i + 2} />
+                </li>
               ))}
-            </div>
+            </ol>
           )}
-        </div>
+        </aside>
       </section>
 
       {/* Quick actions */}
-      <section>
+      <nav aria-label="Quick actions">
         <div className="flex items-center justify-center gap-3 flex-wrap">
           <Button asChild size="lg" className="gap-2">
             <Link to="/search">
@@ -270,10 +272,10 @@ export default function HomePage() {
             </Link>
           </Button>
         </div>
-      </section>
+      </nav>
 
       {/* Upcoming */}
-      <section>
+      <section aria-label={t('home.upcoming')}>
         <div className="mb-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Award className="h-4 w-4 text-primary" />
@@ -296,7 +298,7 @@ export default function HomePage() {
       </section>
 
       {/* Feature cards */}
-      <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <section aria-label="Features" className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {features.map(({ to, icon: Icon, titleKey, descKey }) => (
           <Link key={to} to={to} className="group">
             <Card className="h-full transition-all hover:shadow-md hover:border-primary/30">

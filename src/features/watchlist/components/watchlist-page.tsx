@@ -40,16 +40,15 @@ export default function WatchlistPage() {
   const totalItems = useWatchlistStore((state) => state.items.length)
 
   return (
-    <div className="container max-w-4xl mx-auto px-4 py-8 space-y-6 animate-fade-in">
-      {/* Header */}
-      <div>
+    <article className="container max-w-4xl mx-auto px-4 py-8 space-y-6 animate-fade-in">
+      <header>
         <h1 className="text-3xl font-bold tracking-tight">{t('watchlist.title')}</h1>
         <p className="text-muted-foreground mt-1">
           {totalItems === 0
             ? t('watchlist.noTracked')
             : t('watchlist.tracked', { count: totalItems })}
         </p>
-      </div>
+      </header>
 
       <Separator />
 
@@ -68,6 +67,6 @@ export default function WatchlistPage() {
           </TabsContent>
         ))}
       </WatchlistTabs>
-    </div>
+    </article>
   )
 }

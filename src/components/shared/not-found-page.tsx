@@ -7,12 +7,12 @@ export default function NotFoundPage() {
   usePageTitle('404')
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen gap-4">
+    <article className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
       <h1 className="text-4xl font-bold">{t('notFound.title')}</h1>
       <p className="text-muted-foreground">{t('notFound.message')}</p>
       <Link to="/" className="text-primary hover:underline">
         {t('notFound.backHome')}
       </Link>
-    </div>
+    </article>
   )
 }
