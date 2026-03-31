@@ -11,7 +11,6 @@ import {
 } from '@/components/ui/select'
 import { Input } from '@/components/ui/input'
 import { Separator } from '@/components/ui/separator'
-import { Badge } from '@/components/ui/badge'
 import {
   Sheet,
   SheetContent,
@@ -19,30 +18,12 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet'
+import { GENRE_OPTIONS } from '@/lib/genres'
 import { useAnimeFilters } from '../hooks/use-anime-filters'
 
 const STATUS_KEYS = ['airing', 'complete', 'upcoming'] as const
 const TYPE_KEYS = ['tv', 'movie', 'ova', 'special', 'ona', 'music'] as const
 const RATING_KEYS = ['g', 'pg', 'pg13', 'r17', 'r', 'rx'] as const
-
-const GENRE_OPTIONS = [
-  { id: 1, name: 'Action' },
-  { id: 2, name: 'Adventure' },
-  { id: 4, name: 'Comedy' },
-  { id: 8, name: 'Drama' },
-  { id: 10, name: 'Fantasy' },
-  { id: 14, name: 'Horror' },
-  { id: 7, name: 'Mystery' },
-  { id: 22, name: 'Romance' },
-  { id: 24, name: 'Sci-Fi' },
-  { id: 36, name: 'Slice of Life' },
-  { id: 30, name: 'Sports' },
-  { id: 37, name: 'Supernatural' },
-  { id: 41, name: 'Thriller' },
-  { id: 18, name: 'Mecha' },
-  { id: 19, name: 'Music' },
-  { id: 40, name: 'Psychological' },
-] as const
 
 function parseGenreIds(genres: string | undefined): number[] {
   if (!genres) return []
@@ -67,10 +48,10 @@ function FilterFields() {
   }
 
   return (
-    <div className="flex flex-col gap-4">
+    <fieldset className="flex flex-col gap-4">
       {/* Status */}
       <div className="flex flex-col gap-1.5">
-        <label className="text-sm font-medium">{t('filter.status')}</label>
+        <label htmlFor="filter-status" className="text-sm font-medium">{t('filter.status')}</label>
         <Select
           value={filters.status ?? ''}
           onValueChange={(val) => setFilter('status', val || undefined)}
@@ -156,21 +137,28 @@ function FilterFields() {
       </div>
 
       {/* Genres */}
-      <div className="flex flex-col gap-1.5">
-        <label className="text-sm font-medium">{t('filter.genres')}</label>
+      <div className="flex flex-col gap-1.5" role="group" aria-label={t('filter.genres')}>
+        <span className="text-sm font-medium">{t('filter.genres')}</span>
         <div className="flex flex-wrap gap-1.5">
           {GENRE_OPTIONS.map((genre) => {
             const isSelected = selectedGenreIds.includes(genre.id)
             return (
-              <Badge
+              <button
                 key={genre.id}
-                variant={isSelected ? 'default' : 'outline'}
-                className="cursor-pointer select-none gap-1 px-2 py-1 text-xs transition-colors"
+                type="button"
+                role="checkbox"
+                aria-checked={isSelected}
+                aria-label={genre.name}
+                className={`inline-flex items-center gap-1 rounded-full border px-2 py-1 text-xs font-medium transition-colors select-none ${
+                  isSelected
+                    ? 'border-primary bg-primary text-primary-foreground'
+                    : 'border-input bg-background hover:bg-accent hover:text-accent-foreground'
+                }`}
                 onClick={() => toggleGenre(genre.id)}
               >
                 {isSelected && <Check className="h-3 w-3" />}
                 {genre.name}
-              </Badge>
+              </button>
             )
           })}
         </div>
@@ -178,12 +166,12 @@ function FilterFields() {
 
       {/* Start Date */}
       <div className="flex flex-col gap-1.5">
-        <label className="text-sm font-medium">{t('filter.startDate')}</label>
+        <label htmlFor="filter-start-date" className="text-sm font-medium">{t('filter.startDate')}</label>
         <Input
+          id="filter-start-date"
           type="date"
           value={filters.start_date ?? ''}
           onChange={(e) => setFilter('start_date', e.target.value || undefined)}
-          aria-label={t('filter.startDate')}
         />
       </div>
 
@@ -192,7 +180,7 @@ function FilterFields() {
       <Button variant="outline" onClick={resetFilters} className="w-full">
         {t('filter.reset')}
       </Button>
-    </div>
+    </fieldset>
   )
 }
 

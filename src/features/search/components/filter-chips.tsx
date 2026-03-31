@@ -1,26 +1,8 @@
 import { useTranslation } from 'react-i18next'
 import { X } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
+import { GENRE_ID_TO_NAME } from '@/lib/genres'
 import { useAnimeFilters } from '../hooks/use-anime-filters'
-
-const GENRE_ID_TO_NAME: Record<number, string> = {
-  1: 'Action',
-  2: 'Adventure',
-  4: 'Comedy',
-  7: 'Mystery',
-  8: 'Drama',
-  10: 'Fantasy',
-  14: 'Horror',
-  18: 'Mecha',
-  19: 'Music',
-  22: 'Romance',
-  24: 'Sci-Fi',
-  30: 'Sports',
-  36: 'Slice of Life',
-  37: 'Supernatural',
-  40: 'Psychological',
-  41: 'Thriller',
-}
 
 function genreIdsToNames(genres: string): string {
   return genres

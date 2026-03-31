@@ -8,30 +8,8 @@ import type { Anime, JikanListResponse } from '@/types/jikan'
 import { useGlobalRecommendations } from '../api/use-global-recommendations'
 import { usePersonalizedRecommendations } from '../api/use-personalized-recommendations'
 import { useTasteProfile } from '../hooks/use-taste-profile'
+import { GENRE_NAME_TO_ID } from '@/lib/genres'
 import RecommendationCard from './recommendation-card'
-
-// MAL genre ID mapping for common genres
-const GENRE_NAME_TO_ID: Record<string, number> = {
-  Action: 1,
-  Adventure: 2,
-  Comedy: 4,
-  Drama: 8,
-  Fantasy: 10,
-  Horror: 14,
-  Mystery: 7,
-  Romance: 22,
-  'Sci-Fi': 24,
-  'Slice of Life': 36,
-  Sports: 30,
-  Supernatural: 37,
-  Thriller: 41,
-  'Martial Arts': 17,
-  Magic: 16,
-  Mecha: 18,
-  Music: 19,
-  Psychological: 40,
-  School: 23,
-}
 
 async function fetchTopAiring(): Promise<Anime[]> {
   const { data } = await apiClient.get<JikanListResponse<Anime>>('/top/anime', {

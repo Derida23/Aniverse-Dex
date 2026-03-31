@@ -5,27 +5,8 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/componen
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
+import { GENRE_OPTIONS } from '@/lib/genres'
 import { useColdStart } from '../hooks/use-cold-start'
-
-interface GenreOption {
-  id: number
-  name: string
-}
-
-const GENRE_OPTIONS: GenreOption[] = [
-  { id: 1, name: 'Action' },
-  { id: 2, name: 'Adventure' },
-  { id: 4, name: 'Comedy' },
-  { id: 8, name: 'Drama' },
-  { id: 10, name: 'Fantasy' },
-  { id: 14, name: 'Horror' },
-  { id: 7, name: 'Mystery' },
-  { id: 22, name: 'Romance' },
-  { id: 24, name: 'Sci-Fi' },
-  { id: 36, name: 'Slice of Life' },
-  { id: 30, name: 'Sports' },
-  { id: 37, name: 'Supernatural' },
-]
 
 const MIN_GENRES = 3
 
@@ -68,18 +49,24 @@ export default function ColdStartWizard() {
               </p>
             </CardHeader>
             <CardContent>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-2" role="group" aria-label="Genre selection">
                 {GENRE_OPTIONS.map((genre) => {
                   const isSelected = selectedIds.includes(genre.id)
                   return (
-                    <Badge
+                    <button
                       key={genre.id}
-                      variant={isSelected ? 'default' : 'outline'}
-                      className="cursor-pointer select-none px-3 py-1.5 text-sm transition-colors"
+                      type="button"
+                      role="checkbox"
+                      aria-checked={isSelected}
+                      className={`inline-flex items-center rounded-full border px-3 py-1.5 text-sm font-medium transition-colors select-none ${
+                        isSelected
+                          ? 'border-primary bg-primary text-primary-foreground'
+                          : 'border-input bg-background hover:bg-accent hover:text-accent-foreground'
+                      }`}
                       onClick={() => toggleGenre(genre.id)}
                     >
                       {genre.name}
-                    </Badge>
+                    </button>
                   )
                 })}
               </div>
