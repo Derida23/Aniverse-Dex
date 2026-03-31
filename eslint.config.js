@@ -10,7 +10,26 @@ export default [
   js.configs.recommended,
   {
     files: ['**/*.{ts,tsx}'],
-    languageOptions: { parser: tsParser },
+    languageOptions: {
+      parser: tsParser,
+      globals: {
+        // Browser globals
+        window: 'readonly',
+        document: 'readonly',
+        navigator: 'readonly',
+        localStorage: 'readonly',
+        setTimeout: 'readonly',
+        clearTimeout: 'readonly',
+        setInterval: 'readonly',
+        clearInterval: 'readonly',
+        HTMLDivElement: 'readonly',
+        IntersectionObserver: 'readonly',
+        URLSearchParams: 'readonly',
+        BroadcastChannel: 'readonly',
+        MessageEvent: 'readonly',
+        React: 'readonly',
+      },
+    },
     plugins: {
       '@typescript-eslint': tsPlugin,
       'react-hooks': reactHooks,
@@ -19,9 +38,10 @@ export default [
     rules: {
       ...tsPlugin.configs.recommended.rules,
       ...reactHooks.configs.recommended.rules,
-      'react-refresh/only-export-components': 'warn',
+      'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
       '@typescript-eslint/no-explicit-any': 'error',
       '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+      'no-undef': 'off', // TypeScript handles this
     },
   },
   prettierConfig,

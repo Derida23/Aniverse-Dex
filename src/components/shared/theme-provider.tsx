@@ -2,10 +2,15 @@ import { createContext, useContext, useEffect, useState } from 'react'
 
 type Theme = 'light' | 'dark' | 'system'
 
-const ThemeContext = createContext<{
+interface ThemeContextValue {
   theme: Theme
   setTheme: (t: Theme) => void
-}>({ theme: 'system', setTheme: () => {} })
+}
+
+const ThemeContext = createContext<ThemeContextValue>({
+  theme: 'system',
+  setTheme: () => {},
+})
 
 export function ThemeProvider({
   children,
@@ -17,7 +22,7 @@ export function ThemeProvider({
   storageKey?: string
 }) {
   const [theme, setThemeState] = useState<Theme>(
-    () => (localStorage.getItem(storageKey) as Theme) ?? defaultTheme
+    () => (localStorage.getItem(storageKey) as Theme) ?? defaultTheme,
   )
 
   useEffect(() => {
@@ -46,4 +51,5 @@ export function ThemeProvider({
   )
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useTheme = () => useContext(ThemeContext)

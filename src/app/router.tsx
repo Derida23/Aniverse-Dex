@@ -1,25 +1,18 @@
 import { createBrowserRouter } from 'react-router-dom'
 import { lazy, Suspense } from 'react'
 import { RootLayout } from '@/components/shared/root-layout'
+import { PageSkeleton } from './page-skeleton'
 
 const HomePage = lazy(() => import('@/features/home/components/home-page'))
 const SearchPage = lazy(() => import('@/features/search/components/search-page'))
 const AnimeDetailPage = lazy(() => import('@/features/anime-detail/components/anime-detail-page'))
 const WatchlistPage = lazy(() => import('@/features/watchlist/components/watchlist-page'))
 const RecommendationPage = lazy(
-  () => import('@/features/recommendation/components/recommendation-page')
+  () => import('@/features/recommendation/components/recommendation-page'),
 )
 const SeasonalPage = lazy(() => import('@/features/seasonal/components/seasonal-page'))
 const ComparePage = lazy(() => import('@/features/compare/components/compare-page'))
 const NotFoundPage = lazy(() => import('@/components/shared/not-found-page'))
-
-function PageSkeleton() {
-  return (
-    <div className="flex min-h-[60vh] items-center justify-center">
-      <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-primary" />
-    </div>
-  )
-}
 
 function withSuspense(Component: React.ComponentType) {
   return (
