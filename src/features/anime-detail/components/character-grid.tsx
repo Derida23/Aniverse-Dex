@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Mic, Star } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
@@ -11,19 +11,13 @@ interface CharacterGridProps {
   animeId: number
 }
 
-function CharacterCard({
-  char,
-  onClick,
-}: {
-  char: Character
-  onClick: () => void
-}) {
+function CharacterCard({ char, onClick }: { char: Character; onClick: () => void }) {
   const japaneseVA = char.voice_actors.find((va) => va.language === 'Japanese')
 
   return (
     <button
       onClick={onClick}
-      className="group relative flex flex-col overflow-hidden rounded-xl border bg-card text-left shadow-sm transition-all hover:shadow-lg hover:scale-[1.02] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+      className="group bg-card focus-visible:ring-ring relative flex flex-col overflow-hidden rounded-xl border text-left shadow-sm transition-all hover:scale-[1.02] hover:shadow-lg focus-visible:ring-2 focus-visible:outline-none"
     >
       {/* Character image with overlay */}
       <div className="relative aspect-3/4 w-full overflow-hidden">
@@ -40,15 +34,15 @@ function CharacterCard({
         <div className="absolute top-2 left-2">
           <Badge
             variant={char.role === 'Main' ? 'default' : 'secondary'}
-            className="text-[10px] px-1.5 py-0 shadow-md"
+            className="px-1.5 py-0 text-[10px] shadow-md"
           >
             {char.role === 'Main' ? '★ Main' : 'Supporting'}
           </Badge>
         </div>
 
         {/* Bottom info overlay */}
-        <div className="absolute bottom-0 left-0 right-0 p-2.5">
-          <p className="text-sm font-bold leading-tight text-white drop-shadow-lg line-clamp-2">
+        <div className="absolute right-0 bottom-0 left-0 p-2.5">
+          <p className="line-clamp-2 text-sm leading-tight font-bold text-white drop-shadow-lg">
             {char.character.name}
           </p>
 
@@ -60,11 +54,9 @@ function CharacterCard({
                 alt={japaneseVA.person.name}
                 className="h-5 w-5 rounded-full object-cover ring-1 ring-white/50"
               />
-              <div className="flex items-center gap-1 min-w-0">
+              <div className="flex min-w-0 items-center gap-1">
                 <Mic className="h-3 w-3 shrink-0 text-white/70" />
-                <span className="text-[11px] text-white/90 truncate">
-                  {japaneseVA.person.name}
-                </span>
+                <span className="truncate text-[11px] text-white/90">{japaneseVA.person.name}</span>
               </div>
             </div>
           )}
@@ -76,7 +68,7 @@ function CharacterCard({
 
 function CharacterCardSkeleton() {
   return (
-    <div className="flex flex-col overflow-hidden rounded-xl border bg-card">
+    <div className="bg-card flex flex-col overflow-hidden rounded-xl border">
       <Skeleton className="aspect-3/4 w-full" />
     </div>
   )
@@ -87,11 +79,22 @@ export default function CharacterGrid({ animeId }: CharacterGridProps) {
   const [selectedCharacter, setSelectedCharacter] = useState<Character | null>(null)
   const { data: characters, isPending, isError } = useAnimeCharacters(animeId)
 
+  const { sorted, mainCount, supportCount } = useMemo(() => {
+    if (!characters || characters.length === 0) return { sorted: [], mainCount: 0, supportCount: 0 }
+    const s = [...characters].sort((a, b) => {
+      if (a.role === 'Main' && b.role !== 'Main') return -1
+      if (a.role !== 'Main' && b.role === 'Main') return 1
+      return 0
+    })
+    const mc = s.filter((c) => c.role === 'Main').length
+    return { sorted: s, mainCount: mc, supportCount: s.length - mc }
+  }, [characters])
+
   if (isPending) {
     return (
       <section className="container mx-auto px-4 py-6">
-        <h2 className="text-xl font-semibold mb-4">{t('detail.characters')}</h2>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+        <h2 className="mb-4 text-xl font-semibold">{t('detail.characters')}</h2>
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
           {Array.from({ length: 10 }).map((_, i) => (
             <CharacterCardSkeleton key={i} />
           ))}
@@ -103,7 +106,7 @@ export default function CharacterGrid({ animeId }: CharacterGridProps) {
   if (isError) {
     return (
       <section className="container mx-auto px-4 py-6">
-        <h2 className="text-xl font-semibold mb-4">{t('detail.characters')}</h2>
+        <h2 className="mb-4 text-xl font-semibold">{t('detail.characters')}</h2>
         <p className="text-destructive text-sm">{t('detail.failedCharacters')}</p>
       </section>
     )
@@ -112,21 +115,11 @@ export default function CharacterGrid({ animeId }: CharacterGridProps) {
   if (!characters || characters.length === 0) {
     return (
       <section className="container mx-auto px-4 py-6">
-        <h2 className="text-xl font-semibold mb-4">{t('detail.characters')}</h2>
+        <h2 className="mb-4 text-xl font-semibold">{t('detail.characters')}</h2>
         <p className="text-muted-foreground text-sm italic">{t('detail.noCharacters')}</p>
       </section>
     )
   }
-
-  // Sort: Main characters first
-  const sorted = [...characters].sort((a, b) => {
-    if (a.role === 'Main' && b.role !== 'Main') return -1
-    if (a.role !== 'Main' && b.role === 'Main') return 1
-    return 0
-  })
-
-  const mainCount = sorted.filter((c) => c.role === 'Main').length
-  const supportCount = sorted.length - mainCount
 
   return (
     <section className="container mx-auto px-4 py-6">
@@ -147,7 +140,7 @@ export default function CharacterGrid({ animeId }: CharacterGridProps) {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
         {sorted.map((char) => (
           <CharacterCard
             key={char.character.mal_id}

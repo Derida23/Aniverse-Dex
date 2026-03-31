@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { AlertCircle, SearchX, Loader2 } from 'lucide-react'
 import { AnimeCard } from '@/components/shared/anime-card'
@@ -27,7 +27,18 @@ export function AnimeGrid({
   const { t } = useTranslation()
   const sentinelRef = useRef<HTMLDivElement>(null)
 
-  // Intersection Observer for infinite scroll
+  const allAnime = useMemo(() => {
+    const raw = data?.pages.flatMap((page) => page.data) ?? []
+    const seen = new Set<number>()
+    return raw.filter((a) => {
+      if (seen.has(a.mal_id)) return false
+      seen.add(a.mal_id)
+      return true
+    })
+  }, [data])
+
+  const total = data?.pages[0]?.pagination.items.total ?? 0
+
   useEffect(() => {
     const sentinel = sentinelRef.current
     if (!sentinel) return
@@ -61,17 +72,6 @@ export function AnimeGrid({
     )
   }
 
-  const allAnime = (() => {
-    const raw = data?.pages.flatMap((page) => page.data) ?? []
-    const seen = new Set<number>()
-    return raw.filter((a) => {
-      if (seen.has(a.mal_id)) return false
-      seen.add(a.mal_id)
-      return true
-    })
-  })()
-  const total = data?.pages[0]?.pagination.items.total ?? 0
-
   if (allAnime.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center gap-3 py-16 text-center">
@@ -86,7 +86,6 @@ export function AnimeGrid({
 
   return (
     <div className="flex flex-col gap-6">
-      {/* Results count */}
       <p className="text-sm text-muted-foreground">
         {t('common.results', { count: total })}
       </p>
@@ -97,7 +96,6 @@ export function AnimeGrid({
         ))}
       </div>
 
-      {/* Sentinel + loading indicator */}
       <div ref={sentinelRef} className="flex justify-center py-4">
         {isFetchingNextPage && (
           <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
