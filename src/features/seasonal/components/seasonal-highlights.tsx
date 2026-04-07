@@ -74,6 +74,27 @@ function HighlightSection({ title, badge, animes }: HighlightSectionProps) {
   )
 }
 
+export function computeHighlightIds(animeList: Anime[]): Set<number> {
+  const deduped = animeList.filter((a, i, arr) => arr.findIndex((b) => b.mal_id === a.mal_id) === i)
+
+  const topIds = [...deduped]
+    .filter((a) => a.score !== null)
+    .sort((a, b) => (b.score ?? 0) - (a.score ?? 0))
+    .slice(0, 6)
+    .map((a) => a.mal_id)
+
+  const gemIds = deduped
+    .filter(
+      (a) =>
+        (a.score === null || a.score < 7.5) &&
+        (a.favorites > 1_000 || a.members > 50_000),
+    )
+    .slice(0, 6)
+    .map((a) => a.mal_id)
+
+  return new Set([...topIds, ...gemIds])
+}
+
 export function SeasonalHighlights() {
   const { t } = useTranslation()
   const { data, isPending, isError, error } = useCurrentSeason()
@@ -104,7 +125,7 @@ export function SeasonalHighlights() {
     )
   }
 
-  const allAnime = data?.data ?? []
+  const allAnime = (data?.data ?? []).filter((a, i, arr) => arr.findIndex((b) => b.mal_id === a.mal_id) === i)
 
   const topThisSeason = [...allAnime]
     .filter((a) => a.score !== null)

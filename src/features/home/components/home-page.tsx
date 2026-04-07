@@ -10,6 +10,15 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { apiClient } from '@/lib/axios'
 import type { Anime, JikanListResponse } from '@/types/jikan'
 
+function dedupAnime(items: Anime[]): Anime[] {
+  const seen = new Set<number>()
+  return items.filter((a) => {
+    if (seen.has(a.mal_id)) return false
+    seen.add(a.mal_id)
+    return true
+  })
+}
+
 function useTopAiring() {
   return useQuery({
     queryKey: ['home', 'top-airing'],
@@ -17,7 +26,7 @@ function useTopAiring() {
       const { data } = await apiClient.get<JikanListResponse<Anime>>('/top/anime', {
         params: { filter: 'airing', limit: 5 },
       })
-      return data.data
+      return dedupAnime(data.data)
     },
     staleTime: 1000 * 60 * 30,
   })
@@ -31,7 +40,7 @@ function useTopUpcoming() {
       const { data } = await apiClient.get<JikanListResponse<Anime>>('/top/anime', {
         params: { filter: 'upcoming', limit: 6 },
       })
-      return data.data
+      return dedupAnime(data.data)
     },
     staleTime: 1000 * 60 * 30,
   })

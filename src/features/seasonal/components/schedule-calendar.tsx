@@ -154,7 +154,10 @@ function groupByDay(schedules: Schedule[]): Record<WeekDayLabel, Schedule[]> {
     Sunday: [],
   }
 
+  const seen = new Set<number>()
   for (const anime of schedules) {
+    if (seen.has(anime.mal_id)) continue
+    seen.add(anime.mal_id)
     const day = normalizeBroadcastDay(anime.broadcast.day)
     if (day) {
       grouped[day].push(anime)

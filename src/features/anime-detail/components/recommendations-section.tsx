@@ -46,7 +46,9 @@ export default function RecommendationsSection({ animeId }: RecommendationsSecti
     <section className="container mx-auto px-4 py-6">
       <h2 className="text-xl font-semibold mb-4">{t('detail.similarAnime')}</h2>
       <div className="flex gap-3 overflow-x-auto pb-3 scrollbar-thin scrollbar-thumb-muted-foreground/30">
-        {recommendations.map(({ entry }) => (
+        {recommendations
+          .filter((r, i, arr) => arr.findIndex((b) => b.entry.mal_id === r.entry.mal_id) === i)
+          .map(({ entry }) => (
           <Link
             key={entry.mal_id}
             to={`/anime/${entry.mal_id}`}

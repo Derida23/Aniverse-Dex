@@ -116,9 +116,11 @@ export function TodayReleases() {
             <p className="text-sm text-muted-foreground">{t('seasonal.noToday')}</p>
           ) : (
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
-              {data.data.map((anime) => (
-                <TodayAnimeCard key={anime.mal_id} anime={anime} />
-              ))}
+              {data.data
+                .filter((anime, idx, arr) => arr.findIndex((a) => a.mal_id === anime.mal_id) === idx)
+                .map((anime) => (
+                  <TodayAnimeCard key={anime.mal_id} anime={anime} />
+                ))}
             </div>
           )}
         </>

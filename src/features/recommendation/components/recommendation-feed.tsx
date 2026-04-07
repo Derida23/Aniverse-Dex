@@ -38,10 +38,20 @@ function useSimilarAnime(genreId: string) {
   })
 }
 
+function dedup(items: Anime[]): Anime[] {
+  const seen = new Set<number>()
+  return items.filter((a) => {
+    if (seen.has(a.mal_id)) return false
+    seen.add(a.mal_id)
+    return true
+  })
+}
+
 function CardGrid({ items, reason }: { items: Anime[]; reason?: string }) {
+  const unique = dedup(items)
   return (
     <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
-      {items.map((anime) => (
+      {unique.map((anime) => (
         <RecommendationCard key={anime.mal_id} anime={anime} {...(reason !== undefined ? { reason } : {})} />
       ))}
     </div>

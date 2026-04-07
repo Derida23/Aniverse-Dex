@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { usePageTitle } from '@/hooks/use-page-title'
 import { Star, AlertCircle } from 'lucide-react'
@@ -18,7 +18,7 @@ import { useCurrentSeason } from '../api/use-current-season'
 import { useSeasonAnime } from '../api/use-season'
 import { TodayReleases } from './today-releases'
 import { ScheduleCalendar } from './schedule-calendar'
-import { SeasonalHighlights } from './seasonal-highlights'
+import { SeasonalHighlights, computeHighlightIds } from './seasonal-highlights'
 
 type SeasonName = 'winter' | 'spring' | 'summer' | 'fall'
 
@@ -176,6 +176,22 @@ function SeasonTabContent({ mode, selectedYear, selectedSeason }: SeasonTabConte
   const query = mode === 'current' ? currentQuery : customQuery
   const { data, isPending, isError, error } = query
 
+  const highlightIds = useMemo(
+    () => (mode === 'current' ? computeHighlightIds(data?.data ?? []) : new Set<number>()),
+    [mode, data],
+  )
+
+  const gridAnime = useMemo(() => {
+    const raw = data?.data ?? []
+    const seen = new Set<number>()
+    return raw.filter((a) => {
+      if (seen.has(a.mal_id)) return false
+      if (highlightIds.has(a.mal_id)) return false
+      seen.add(a.mal_id)
+      return true
+    })
+  }, [data, highlightIds])
+
   return (
     <div className="flex flex-col gap-8">
       {mode === 'current' && <SeasonalHighlights />}
@@ -198,11 +214,11 @@ function SeasonTabContent({ mode, selectedYear, selectedSeason }: SeasonTabConte
 
         {!isPending && !isError && data && (
           <>
-            {data.data.length === 0 ? (
+            {gridAnime.length === 0 ? (
               <p className="text-sm text-muted-foreground">{t('seasonal.noSeason')}</p>
             ) : (
               <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
-                {data.data.map((anime) => (
+                {gridAnime.map((anime) => (
                   <SeasonCard key={anime.mal_id} anime={anime} />
                 ))}
               </div>

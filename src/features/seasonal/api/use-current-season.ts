@@ -4,6 +4,12 @@ import type { Anime, JikanListResponse } from '@/types/jikan'
 
 async function fetchCurrentSeason(): Promise<JikanListResponse<Anime>> {
   const { data } = await apiClient.get<JikanListResponse<Anime>>('/seasons/now')
+  const seen = new Set<number>()
+  data.data = data.data.filter((a) => {
+    if (seen.has(a.mal_id)) return false
+    seen.add(a.mal_id)
+    return true
+  })
   return data
 }
 
